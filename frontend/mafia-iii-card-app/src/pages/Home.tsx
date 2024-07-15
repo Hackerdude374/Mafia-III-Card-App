@@ -26,7 +26,11 @@ const Home: React.FC = () => {
       alert('Card favorited successfully!');
     } catch (err) {
       console.error(err);
-      alert('Failed to favorite card.');
+      if (err.response && err.response.data.message === 'Card already favorited') {
+        alert('Card already favorited!');
+      } else {
+        alert('Failed to favorite card.');
+      }
     }
   };
 
