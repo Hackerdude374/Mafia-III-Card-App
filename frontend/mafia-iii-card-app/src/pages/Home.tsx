@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { fetchCards } from '../api';
+import { fetchCards, addFavorite } from '../api';
+import { useAuth } from '../AuthContext';
 
 const Home: React.FC = () => {
   const [cards, setCards] = useState([]);
+  const { isAuthenticated } = useAuth();
 
   useEffect(() => {
     const getCards = async () => {
@@ -17,6 +19,17 @@ const Home: React.FC = () => {
     getCards();
   }, []);
 
+  const handleFavorite = async (cardId: number) => {
+    try {
+      const response = await addFavorite(cardId);
+      console.log('Favorite response:', response); // Debugging
+      alert('Card favorited successfully!');
+    } catch (err) {
+      console.error(err);
+      alert('Failed to favorite card.');
+    }
+  };
+
   return (
     <div className="container">
       <h1>All Cards</h1>
@@ -27,6 +40,9 @@ const Home: React.FC = () => {
             <p>{card.description}</p>
             <p>{card.location}</p>
             <img src={card.image} alt={card.title} />
+            {isAuthenticated && (
+              <button onClick={() => handleFavorite(card.id)}>Favorite</button>
+            )}
           </li>
         ))}
       </ul>

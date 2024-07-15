@@ -4,11 +4,15 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 const userRouter = require('./routes/user');
+const cardRouter = require('./routes/card');
+const favoritesRouter = require('./routes/favorites'); // Add this line
 
 app.use(cors());
 app.use(express.json());
 
 app.use('/api/users', userRouter);
+app.use('/api/cards', cardRouter);
+app.use('/api/favorites', favoritesRouter); // Add this line
 
 app.get('/', (req, res) => {
   res.send('Hello World!');

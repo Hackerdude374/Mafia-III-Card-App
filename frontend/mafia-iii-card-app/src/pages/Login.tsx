@@ -13,6 +13,7 @@ const Login: React.FC = () => {
     e.preventDefault();
     try {
       const { data } = await loginUser({ username, password });
+      console.log('Token received:', data.token); // Debugging
       localStorage.setItem('token', data.token);
       login();
       navigate('/');

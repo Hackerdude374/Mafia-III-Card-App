@@ -8,6 +8,7 @@ const Profile: React.FC = () => {
     const getFavorites = async () => {
       try {
         const { data } = await fetchFavorites();
+        console.log('Fetched favorites:', data); // Debugging
         setFavorites(data);
       } catch (err) {
         console.error(err);

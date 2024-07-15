@@ -4,36 +4,61 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const pool = require('../db');
 const auth = require('../middleware/auth');
+require('dotenv').config();
 
 // User registration
+// Signup
 router.post('/signup', async (req, res) => {
-  const { username, password } = req.body;
-  try {
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const newUser = await pool.query('INSERT INTO users (username, password) VALUES ($1, $2) RETURNING *', [username, hashedPassword]);
-    res.json(newUser.rows[0]);
-  } catch (err) {
-    res.status(500).json(err.message);
-  }
-});
+    const { username, password } = req.body;
+    try {
+      const hashedPassword = await bcrypt.hash(password, 10);
+      const newUser = await pool.query(
+        'INSERT INTO users (username, password) VALUES ($1, $2) RETURNING *',
+        [username, hashedPassword]
+      );
+  
+      const token = jwt.sign(
+        { user_id: newUser.rows[0].id, username: newUser.rows[0].username },
+        process.env.JWT_SECRET,
+        { expiresIn: '1h' }
+      );
+  
+      console.log('Token generated:', token); // Debugging
+      res.json({ token });
+    } catch (err) {
+      console.error(err.message);
+      res.status(500).send('Server error');
+    }
+  });
+  
+  module.exports = router;
 
 // User login
+// Login
 router.post('/login', async (req, res) => {
-  const { username, password } = req.body;
-  try {
-    const user = await pool.query('SELECT * FROM users WHERE username = $1', [username]);
-    if (user.rows.length === 0) {
-      return res.status(400).json({ message: 'User not found' });
+    const { username, password } = req.body;
+    try {
+      const user = await pool.query('SELECT * FROM users WHERE username = $1', [username]);
+      if (user.rows.length === 0) {
+        return res.status(400).json({ message: 'Invalid credentials' });
+      }
+  
+      const isMatch = await bcrypt.compare(password, user.rows[0].password);
+      if (!isMatch) {
+        return res.status(400).json({ message: 'Invalid credentials' });
+      }
+  
+      const token = jwt.sign(
+        { user_id: user.rows[0].id, username: user.rows[0].username },
+        process.env.JWT_SECRET,
+        { expiresIn: '1h' }
+      );
+  
+      console.log('Token generated:', token); // Debugging
+      res.json({ token });
+    } catch (err) {
+      console.error(err.message);
+      res.status(500).send('Server error');
     }
-    const validPassword = await bcrypt.compare(password, user.rows[0].password);
-    if (!validPassword) {
-      return res.status(400).json({ message: 'Invalid password' });
-    }
-    const token = jwt.sign({ user_id: user.rows[0].id, is_admin: user.rows[0].is_admin }, 'your_jwt_secret');
-    res.json({ token });
-  } catch (err) {
-    res.status(500).json(err.message);
-  }
-});
-
+  });
 module.exports = router;
