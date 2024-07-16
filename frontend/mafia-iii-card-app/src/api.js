@@ -1,22 +1,24 @@
 import axios from 'axios';
 
-const API = axios.create({ baseURL: 'http://localhost:5000/api' });
-
-API.interceptors.request.use((req) => {
-  const token = localStorage.getItem('token');
-  console.log('Token in interceptor:', token); // Debugging
-  if (token) {
-    req.headers.Authorization = `Bearer ${token}`;
-  }
-  return req;
+const api = axios.create({
+  baseURL: 'http://localhost:5000/api',
 });
 
-export const fetchCards = () => API.get('/cards');
-export const createCard = (cardData) => API.post('/cards', cardData);
-export const updateCard = (id, cardData) => API.put(`/cards/${id}`, cardData);
-export const deleteCard = (id) => API.delete(`/cards/${id}`);
-export const loginUser = (userData) => API.post('/users/login', userData);
-export const registerUser = (userData) => API.post('/users/signup', userData);
-export const fetchFavorites = () => API.get('/favorites');
-export const addFavorite = (cardId) => API.post(`/favorites/${cardId}`);
-export const removeFavorite = (cardId) => API.delete(`/favorites/${cardId}`);
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem('token');
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
+
+export const fetchCards = () => api.get('/cards');
+export const fetchFavorites = () => api.get('/favorites');
+export const addFavorite = (cardId) => api.post(`/favorites/${cardId}`);
+export const removeFavorite = (cardId) => api.delete(`/favorites/${cardId}`);
+export const createCard = (cardData) => api.post('/cards', cardData);
+export const fetchUserCards = () => api.get('/cards/user');
+export const likeCard = (cardId) => api.post(`/cards/${cardId}/like`);
+export const dislikeCard = (cardId) => api.post(`/cards/${cardId}/dislike`);
+export const registerUser = (userData) => api.post('/users/register', userData);
+export const loginUser = (userData) => api.post('/users/login', userData);

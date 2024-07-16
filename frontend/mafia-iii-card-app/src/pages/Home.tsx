@@ -1,6 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { fetchCards, fetchFavorites, addFavorite, removeFavorite } from '../api';
+import { fetchCards, fetchFavorites, addFavorite, removeFavorite, likeCard, dislikeCard } from '../api';
 import { useAuth } from '../AuthContext';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faHeart as solidHeart, faThumbsUp, faThumbsDown } from '@fortawesome/free-solid-svg-icons';
+import { faHeart as regularHeart } from '@fortawesome/free-regular-svg-icons';
+import AddCardButton from '../components/AddCardButton'; // Ensure this import
 
 const Home: React.FC = () => {
   const [cards, setCards] = useState([]);
@@ -51,6 +55,24 @@ const Home: React.FC = () => {
     }
   };
 
+  const handleLike = async (cardId: number) => {
+    try {
+      await likeCard(cardId);
+      setCards(cards.map(card => card.id === cardId ? { ...card, likes: card.likes + 1 } : card));
+    } catch (err) {
+      console.error('Error liking card:', err);
+    }
+  };
+
+  const handleDislike = async (cardId: number) => {
+    try {
+      await dislikeCard(cardId);
+      setCards(cards.map(card => card.id === cardId ? { ...card, dislikes: card.dislikes + 1 } : card));
+    } catch (err) {
+      console.error('Error disliking card:', err);
+    }
+  };
+
   return (
     <div className="container">
       <h1>All Cards</h1>
@@ -61,16 +83,31 @@ const Home: React.FC = () => {
             <p>{card.description}</p>
             <p>{card.location}</p>
             <img src={card.image} alt={card.title} />
-            {isAuthenticated && (
-              favorites.includes(card.id) ? (
-                <button onClick={() => handleUnfavorite(card.id)}>Unfavorite</button>
-              ) : (
-                <button onClick={() => handleFavorite(card.id)}>Favorite</button>
-              )
-            )}
+            <div className="card-actions">
+              <button onClick={() => handleLike(card.id)}>
+                <FontAwesomeIcon icon={faThumbsUp} color={card.likes > 0 ? 'green' : 'gray'} /> {card.likes}
+              </button>
+              <button onClick={() => handleDislike(card.id)}>
+                <FontAwesomeIcon icon={faThumbsDown} color={card.dislikes > 0 ? 'red' : 'gray'} /> {card.dislikes}
+              </button>
+              {isAuthenticated && (
+                <>
+                  {favorites.includes(card.id) ? (
+                    <button onClick={() => handleUnfavorite(card.id)}>
+                      <FontAwesomeIcon icon={solidHeart} color="red" />
+                    </button>
+                  ) : (
+                    <button onClick={() => handleFavorite(card.id)}>
+                      <FontAwesomeIcon icon={regularHeart} color="gray" />
+                    </button>
+                  )}
+                </>
+              )}
+            </div>
           </div>
         ))}
       </div>
+      {isAuthenticated && <AddCardButton />} {/* Conditionally render AddCardButton */}
     </div>
   );
 };
