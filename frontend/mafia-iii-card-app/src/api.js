@@ -22,3 +22,5 @@ export const likeCard = (cardId) => api.post(`/cards/${cardId}/like`);
 export const dislikeCard = (cardId) => api.post(`/cards/${cardId}/dislike`);
 export const unlikeCard = (cardId) => api.delete(`/cards/${cardId}/unlike`);
 export const undislikeCard = (cardId) => api.delete(`/cards/${cardId}/undislike`);
+export const loginUser = (credentials) => api.post('/auth/login', credentials);
+export const registerUser = (userData) => api.post('/auth/register', userData);
