@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import { fetchCards, fetchFavorites, addFavorite, removeFavorite, likeCard, dislikeCard } from '../api';
+import { fetchCards, fetchFavorites, addFavorite, removeFavorite, likeCard, dislikeCard, unlikeCard, undislikeCard } from '../api';
 import { useAuth } from '../AuthContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHeart as solidHeart, faThumbsUp, faThumbsDown } from '@fortawesome/free-solid-svg-icons';
 import { faHeart as regularHeart } from '@fortawesome/free-regular-svg-icons';
-import AddCardButton from '../components/AddCardButton'; // Ensure this import
+import AddCardButton from '../components/AddCardButton';
 
 const Home: React.FC = () => {
   const [cards, setCards] = useState([]);
   const [favorites, setFavorites] = useState<number[]>([]);
+  const [likesDislikes, setLikesDislikes] = useState<{ [key: number]: 'like' | 'dislike' | null }>({});
   const { isAuthenticated } = useAuth();
 
   useEffect(() => {
@@ -57,8 +58,19 @@ const Home: React.FC = () => {
 
   const handleLike = async (cardId: number) => {
     try {
-      await likeCard(cardId);
-      setCards(cards.map(card => card.id === cardId ? { ...card, likes: card.likes + 1 } : card));
+      if (likesDislikes[cardId] === 'like') {
+        await unlikeCard(cardId);
+        setLikesDislikes({ ...likesDislikes, [cardId]: null });
+        setCards(cards.map(card => card.id === cardId ? { ...card, likes: card.likes - 1 } : card));
+      } else {
+        if (likesDislikes[cardId] === 'dislike') {
+          await undislikeCard(cardId);
+          setCards(cards.map(card => card.id === cardId ? { ...card, dislikes: card.dislikes - 1 } : card));
+        }
+        await likeCard(cardId);
+        setLikesDislikes({ ...likesDislikes, [cardId]: 'like' });
+        setCards(cards.map(card => card.id === cardId ? { ...card, likes: card.likes + 1 } : card));
+      }
     } catch (err) {
       console.error('Error liking card:', err);
     }
@@ -66,8 +78,19 @@ const Home: React.FC = () => {
 
   const handleDislike = async (cardId: number) => {
     try {
-      await dislikeCard(cardId);
-      setCards(cards.map(card => card.id === cardId ? { ...card, dislikes: card.dislikes + 1 } : card));
+      if (likesDislikes[cardId] === 'dislike') {
+        await undislikeCard(cardId);
+        setLikesDislikes({ ...likesDislikes, [cardId]: null });
+        setCards(cards.map(card => card.id === cardId ? { ...card, dislikes: card.dislikes - 1 } : card));
+      } else {
+        if (likesDislikes[cardId] === 'like') {
+          await unlikeCard(cardId);
+          setCards(cards.map(card => card.id === cardId ? { ...card, likes: card.likes - 1 } : card));
+        }
+        await dislikeCard(cardId);
+        setLikesDislikes({ ...likesDislikes, [cardId]: 'dislike' });
+        setCards(cards.map(card => card.id === cardId ? { ...card, dislikes: card.dislikes + 1 } : card));
+      }
     } catch (err) {
       console.error('Error disliking card:', err);
     }
@@ -85,10 +108,10 @@ const Home: React.FC = () => {
             <img src={card.image} alt={card.title} />
             <div className="card-actions">
               <button onClick={() => handleLike(card.id)}>
-                <FontAwesomeIcon icon={faThumbsUp} color={card.likes > 0 ? 'green' : 'gray'} /> {card.likes}
+                <FontAwesomeIcon icon={faThumbsUp} color={likesDislikes[card.id] === 'like' ? 'green' : 'gray'} /> {card.likes}
               </button>
               <button onClick={() => handleDislike(card.id)}>
-                <FontAwesomeIcon icon={faThumbsDown} color={card.dislikes > 0 ? 'red' : 'gray'} /> {card.dislikes}
+                <FontAwesomeIcon icon={faThumbsDown} color={likesDislikes[card.id] === 'dislike' ? 'red' : 'gray'} /> {card.dislikes}
               </button>
               {isAuthenticated && (
                 <>
