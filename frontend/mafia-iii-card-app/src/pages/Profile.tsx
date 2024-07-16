@@ -33,17 +33,17 @@ const Profile: React.FC = () => {
   return (
     <div className="container">
       <h1>Favorite Cards</h1>
-      <ul>
+      <div className="cards-grid">
         {favorites.map((card) => (
-          <li key={card.id}>
+          <div key={card.id} className="card">
             <h2>{card.title}</h2>
             <p>{card.description}</p>
             <p>{card.location}</p>
             <img src={card.image} alt={card.title} />
             <button onClick={() => handleUnfavorite(card.id)}>Unfavorite</button>
-          </li>
+          </div>
         ))}
-      </ul>
+      </div>
     </div>
   );
 };

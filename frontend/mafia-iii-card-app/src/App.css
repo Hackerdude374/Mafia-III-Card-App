@@ -8,16 +8,26 @@ body {
   background-color: #282c34;
   color: white;
   min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 nav {
   position: fixed;
   top: 0;
+  left: 0;
   width: 100%;
   background-color: #20232a;
-  padding: 1em 0;
+  padding: 1.5em 0; /* Increased padding for thicker navbar */
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   z-index: 1000;
+}
+
+.navbar-container {
+  display: flex;
+  justify-content: center;
 }
 
 nav ul {
@@ -30,6 +40,8 @@ nav ul {
 
 nav ul li {
   margin: 0 1em;
+  display: flex;
+  align-items: center; /* Ensures all items are aligned in the center */
 }
 
 nav ul li a,
@@ -49,22 +61,59 @@ nav ul li button:hover {
 
 .main-content {
   width: 100%;
-  padding-top: 4em; /* Adjust this value based on the height of your navbar */
+  padding-top: 6em; /* Adjust this value based on the new height of your navbar */
   display: flex;
   justify-content: center;
 }
 
 .container {
-  max-width: 800px;
-  margin: 2em;
+  max-width: 1200px;
+  margin: 2em auto;
   padding: 1em;
   background-color: #20232a;
   border-radius: 5px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .container h1 {
   text-align: center;
+}
+
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  justify-items: center;
+}
+
+.card {
+  background: #1e1e1e;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  text-align: left;
+  width: 100%; /* Ensure cards take up the available space */
+}
+
+.card img {
+  max-width: 100%;
+  border-radius: 10px;
+}
+
+.card button {
+  background-color: #333;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.card button:hover {
+  background-color: #555;
 }
 
 .container ul {

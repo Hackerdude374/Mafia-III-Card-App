@@ -42,4 +42,27 @@ router.get('/', auth, async (req, res) => {
   }
 });
 
+
+router.delete('/:cardId', auth, async (req, res) => {
+  try {
+    const { cardId } = req.params;
+    const userId = req.user.user_id;
+    console.log('User ID:', userId, 'Card ID:', cardId); // Debugging
+
+    const deleteFavorite = await pool.query(
+      'DELETE FROM favorites WHERE user_id = $1 AND card_id = $2 RETURNING *',
+      [userId, cardId]
+    );
+
+    if (deleteFavorite.rows.length === 0) {
+      return res.status(400).json({ message: 'Favorite not found' });
+    }
+
+    res.json(deleteFavorite.rows[0]);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server error');
+  }
+});
+
 module.exports = router;

@@ -1,28 +1,34 @@
 import React, { useEffect, useState } from 'react';
-import { fetchCards, addFavorite } from '../api';
+import { fetchCards, fetchFavorites, addFavorite, removeFavorite } from '../api';
 import { useAuth } from '../AuthContext';
 
 const Home: React.FC = () => {
   const [cards, setCards] = useState([]);
+  const [favorites, setFavorites] = useState<number[]>([]);
   const { isAuthenticated } = useAuth();
 
   useEffect(() => {
-    const getCards = async () => {
+    const getCardsAndFavorites = async () => {
       try {
-        const { data } = await fetchCards();
-        setCards(data);
+        const { data: cardsData } = await fetchCards();
+        setCards(cardsData);
+
+        if (isAuthenticated) {
+          const { data: favoritesData } = await fetchFavorites();
+          setFavorites(favoritesData.map((fav: any) => fav.id)); // Assuming 'id' is the card ID
+        }
       } catch (err) {
         console.error(err);
       }
     };
 
-    getCards();
-  }, []);
+    getCardsAndFavorites();
+  }, [isAuthenticated]);
 
   const handleFavorite = async (cardId: number) => {
     try {
-      const response = await addFavorite(cardId);
-      console.log('Favorite response:', response); // Debugging
+      await addFavorite(cardId);
+      setFavorites([...favorites, cardId]);
       alert('Card favorited successfully!');
     } catch (err) {
       console.error(err);
@@ -34,22 +40,37 @@ const Home: React.FC = () => {
     }
   };
 
+  const handleUnfavorite = async (cardId: number) => {
+    try {
+      await removeFavorite(cardId);
+      setFavorites(favorites.filter((id) => id !== cardId));
+      alert('Card unfavorited successfully!');
+    } catch (err) {
+      console.error(err);
+      alert('Failed to unfavorite card.');
+    }
+  };
+
   return (
     <div className="container">
       <h1>All Cards</h1>
-      <ul>
+      <div className="cards-grid">
         {cards.map((card) => (
-          <li key={card.id}>
+          <div key={card.id} className="card">
             <h2>{card.title}</h2>
             <p>{card.description}</p>
             <p>{card.location}</p>
             <img src={card.image} alt={card.title} />
             {isAuthenticated && (
-              <button onClick={() => handleFavorite(card.id)}>Favorite</button>
+              favorites.includes(card.id) ? (
+                <button onClick={() => handleUnfavorite(card.id)}>Unfavorite</button>
+              ) : (
+                <button onClick={() => handleFavorite(card.id)}>Favorite</button>
+              )
             )}
-          </li>
+          </div>
         ))}
-      </ul>
+      </div>
     </div>
   );
 };
