@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { fetchFavorites, removeFavorite, fetchUserCards } from '../api';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faHeart as solidHeart } from '@fortawesome/free-solid-svg-icons';
+import { faHeart as solidHeart, faThumbsUp, faThumbsDown } from '@fortawesome/free-solid-svg-icons';
 import { faHeart as regularHeart } from '@fortawesome/free-regular-svg-icons';
 
 const Profile: React.FC = () => {
@@ -57,9 +57,15 @@ const Profile: React.FC = () => {
             <p>{card.description}</p>
             <p>{card.location}</p>
             <img src={card.image} alt={card.title} />
-            <button onClick={() => handleUnfavorite(card.id)}>
-              <FontAwesomeIcon icon={solidHeart} color="red" />
-            </button>
+            <div className="card-actions">
+              <button onClick={() => handleUnfavorite(card.id)}>
+                <FontAwesomeIcon icon={solidHeart} color="red" />
+              </button>
+              <div className="likes-dislikes">
+                <FontAwesomeIcon icon={faThumbsUp} color={card.likes > 0 ? 'green' : 'gray'} /> {card.likes}
+                <FontAwesomeIcon icon={faThumbsDown} color={card.dislikes > 0 ? 'red' : 'gray'} /> {card.dislikes}
+              </div>
+            </div>
           </div>
         ))}
       </div>
@@ -72,7 +78,12 @@ const Profile: React.FC = () => {
             <p>{card.description}</p>
             <p>{card.location}</p>
             <img src={card.image} alt={card.title} />
-            {/* Add any additional actions for the user's created cards if needed */}
+            <div className="card-actions">
+              <div className="likes-dislikes">
+                <FontAwesomeIcon icon={faThumbsUp} color={card.likes > 0 ? 'green' : 'gray'} /> {card.likes}
+                <FontAwesomeIcon icon={faThumbsDown} color={card.dislikes > 0 ? 'red' : 'gray'} /> {card.dislikes}
+              </div>
+            </div>
           </div>
         ))}
       </div>
