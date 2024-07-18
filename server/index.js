@@ -101,3 +101,7 @@ app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
  
+
+
+// Debug statements
+console.log('Allowed origins:', allowedOrigins);
