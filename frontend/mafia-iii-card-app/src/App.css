@@ -195,7 +195,14 @@ form button:hover {
   margin-top: 10px;
   font-size: 1.5em;
 }
+.logo {
+  margin-right: 20px;
+}
 
+.logo-img {
+  height: 40px;
+  width: auto;
+}
 .card button:hover {
   color: darkred;
 }
