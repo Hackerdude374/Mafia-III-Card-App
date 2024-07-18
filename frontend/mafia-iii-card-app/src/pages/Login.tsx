@@ -25,7 +25,7 @@ const Login: React.FC = () => {
   return (
     <div className="container">
       <h1>Login</h1>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} className="form-fade-in">
         <input
           type="text"
           value={username}
