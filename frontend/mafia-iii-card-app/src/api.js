@@ -24,3 +24,7 @@ export const unlikeCard = (cardId) => api.delete(`/cards/${cardId}/unlike`);
 export const undislikeCard = (cardId) => api.delete(`/cards/${cardId}/undislike`);
 export const loginUser = (credentials) => api.post('/users/login', credentials);
 export const registerUser = (userData) => api.post('/users/signup', userData);
+//export const updateCard = (cardId, cardData) => api.put(`/cards/${cardId}`, cardData);
+export const deleteCard = (cardId) => api.delete(`/cards/${cardId}`);
+export const fetchCard = (cardId) => api.get(`/cards/${cardId}`);
+export const updateCard = (cardId, cardData) => api.put(`/cards/${cardId}`, cardData);

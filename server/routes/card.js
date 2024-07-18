@@ -9,8 +9,8 @@ router.post('/', auth, async (req, res) => {
   const { title, description, location, image } = req.body;
   try {
     const newCard = await pool.query(
-      'INSERT INTO cards (title, description, location, image, user_id, liked_by, disliked_by) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *',
-      [title, description, location, image, req.user.user_id, [], []]
+      'INSERT INTO cards (title, description, location, image, user_id) VALUES ($1, $2, $3, $4, $5) RETURNING *',
+      [title, description, location, image, req.user.user_id]
     );
     res.json(newCard.rows[0]);
   } catch (err) {

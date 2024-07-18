@@ -5,6 +5,7 @@ import Login from './pages/Login';
 import Signup from './pages/Signup';
 import Profile from './pages/Profile';
 import AddCard from './pages/AddCard';
+import EditCard from './pages/EditCard';
 import Navbar from './components/Navbar';
 
 const AppRouter: React.FC = () => {
@@ -18,6 +19,7 @@ const AppRouter: React.FC = () => {
           <Route path="/signup" element={<Signup />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/add-card" element={<AddCard />} />
+          <Route path="/edit-card/:id" element={<EditCard />} />
         </Routes>
       </div>
     </Router>

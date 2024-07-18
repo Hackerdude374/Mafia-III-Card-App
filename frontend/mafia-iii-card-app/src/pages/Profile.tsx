@@ -1,31 +1,30 @@
 import React, { useEffect, useState } from 'react';
-import { fetchFavorites, removeFavorite, fetchUserCards } from '../api';
+import { fetchFavorites, fetchUserCards, removeFavorite, deleteCard } from '../api';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faHeart as solidHeart, faThumbsUp, faThumbsDown } from '@fortawesome/free-solid-svg-icons';
-import { faHeart as regularHeart } from '@fortawesome/free-regular-svg-icons';
+import { faHeart as solidHeart, faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { useNavigate } from 'react-router-dom';
 
 const Profile: React.FC = () => {
   const [favorites, setFavorites] = useState([]);
   const [userCards, setUserCards] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const getFavorites = async () => {
       try {
         const { data } = await fetchFavorites();
-        console.log('Fetched favorites:', data); // Debugging
         setFavorites(data);
       } catch (err) {
-        console.error(err);
+        console.error('Error fetching favorites:', err);
       }
     };
 
     const getUserCards = async () => {
       try {
         const { data } = await fetchUserCards();
-        console.log('Fetched user cards:', data); // Debugging
         setUserCards(data);
       } catch (err) {
-        console.error(err);
+        console.error('Error fetching user cards:', err);
       }
     };
 
@@ -35,13 +34,27 @@ const Profile: React.FC = () => {
 
   const handleUnfavorite = async (cardId: number) => {
     try {
-      const response = await removeFavorite(cardId);
-      console.log('Unfavorite response:', response); // Debugging
+      await removeFavorite(cardId);
       setFavorites(favorites.filter((card) => card.id !== cardId));
       alert('Card unfavorited successfully!');
     } catch (err) {
-      console.error(err);
+      console.error('Error unfavoriting card:', err);
       alert('Failed to unfavorite card.');
+    }
+  };
+
+  const handleEdit = (cardId: number) => {
+    navigate(`/edit-card/${cardId}`);
+  };
+
+  const handleDelete = async (cardId: number) => {
+    try {
+      await deleteCard(cardId);
+      setUserCards(userCards.filter(card => card.id !== cardId));
+      alert('Card deleted successfully!');
+    } catch (err) {
+      console.error('Error deleting card:', err);
+      alert('Failed to delete card.');
     }
   };
 
@@ -57,15 +70,9 @@ const Profile: React.FC = () => {
             <p>{card.description}</p>
             <p>{card.location}</p>
             <img src={card.image} alt={card.title} />
-            <div className="card-actions">
-              <button onClick={() => handleUnfavorite(card.id)}>
-                <FontAwesomeIcon icon={solidHeart} color="red" />
-              </button>
-              <div className="likes-dislikes">
-                <FontAwesomeIcon icon={faThumbsUp} color={card.likes > 0 ? 'green' : 'gray'} /> {card.likes}
-                <FontAwesomeIcon icon={faThumbsDown} color={card.dislikes > 0 ? 'red' : 'gray'} /> {card.dislikes}
-              </div>
-            </div>
+            <button onClick={() => handleUnfavorite(card.id)}>
+              <FontAwesomeIcon icon={solidHeart} color="red" />
+            </button>
           </div>
         ))}
       </div>
@@ -78,9 +85,13 @@ const Profile: React.FC = () => {
             <p>{card.description}</p>
             <p>{card.location}</p>
             <img src={card.image} alt={card.title} />
-            <div className="likes-dislikes">
-              <FontAwesomeIcon icon={faThumbsUp} color={card.likes > 0 ? 'green' : 'gray'} /> {card.likes}
-              <FontAwesomeIcon icon={faThumbsDown} color={card.dislikes > 0 ? 'red' : 'gray'} /> {card.dislikes}
+            <div className="card-actions">
+              <button onClick={() => handleEdit(card.id)}>
+                <FontAwesomeIcon icon={faEdit} color="blue" />
+              </button>
+              <button onClick={() => handleDelete(card.id)}>
+                <FontAwesomeIcon icon={faTrash} color="red" />
+              </button>
             </div>
           </div>
         ))}

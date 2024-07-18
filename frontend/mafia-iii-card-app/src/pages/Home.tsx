@@ -1,17 +1,19 @@
 import React, { useEffect, useState } from 'react';
-import { fetchCards, fetchFavorites, addFavorite, removeFavorite, likeCard, dislikeCard, unlikeCard, undislikeCard } from '../api';
+import { fetchCards, fetchFavorites, addFavorite, removeFavorite, likeCard, dislikeCard, unlikeCard, undislikeCard, deleteCard } from '../api';
 import { useAuth } from '../AuthContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faHeart as solidHeart, faThumbsUp, faThumbsDown } from '@fortawesome/free-solid-svg-icons';
+import { faHeart as solidHeart, faThumbsUp, faThumbsDown, faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { faHeart as regularHeart } from '@fortawesome/free-regular-svg-icons';
 import AddCardButton from '../components/AddCardButton';
+import { useNavigate } from 'react-router-dom';
 
 const Home: React.FC = () => {
   const [cards, setCards] = useState([]);
   const [favorites, setFavorites] = useState<number[]>([]);
   const [likesDislikes, setLikesDislikes] = useState<{ [key: number]: 'like' | 'dislike' | null }>({});
   const [searchQuery, setSearchQuery] = useState('');
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const getCardsAndFavorites = async () => {
@@ -20,11 +22,15 @@ const Home: React.FC = () => {
         setCards(cardsData);
 
         if (isAuthenticated) {
-          const { data: favoritesData } = await fetchFavorites();
-          setFavorites(favoritesData.map((fav: any) => fav.id)); // Assuming 'id' is the card ID
+          try {
+            const { data: favoritesData } = await fetchFavorites();
+            setFavorites(favoritesData.map((fav: any) => fav.id)); // Assuming 'id' is the card ID
+          } catch (err) {
+            console.error('Error fetching favorites:', err);
+          }
         }
       } catch (err) {
-        console.error(err);
+        console.error('Error fetching cards:', err);
       }
     };
 
@@ -37,7 +43,7 @@ const Home: React.FC = () => {
       setFavorites([...favorites, cardId]);
       alert('Card favorited successfully!');
     } catch (err) {
-      console.error(err);
+      console.error('Error favoriting card:', err);
       if (err.response && err.response.data.message === 'Card already favorited') {
         alert('Card already favorited!');
       } else {
@@ -52,7 +58,7 @@ const Home: React.FC = () => {
       setFavorites(favorites.filter((id) => id !== cardId));
       alert('Card unfavorited successfully!');
     } catch (err) {
-      console.error(err);
+      console.error('Error unfavoriting card:', err);
       alert('Failed to unfavorite card.');
     }
   };
@@ -97,6 +103,21 @@ const Home: React.FC = () => {
     }
   };
 
+  const handleEdit = (cardId: number) => {
+    navigate(`/edit-card/${cardId}`);
+  };
+
+  const handleDelete = async (cardId: number) => {
+    try {
+      await deleteCard(cardId);
+      setCards(cards.filter(card => card.id !== cardId));
+      alert('Card deleted successfully!');
+    } catch (err) {
+      console.error('Error deleting card:', err);
+      alert('Failed to delete card.');
+    }
+  };
+
   const filteredCards = cards.filter(card =>
     card.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
     card.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -137,6 +158,16 @@ const Home: React.FC = () => {
                     <button onClick={() => handleFavorite(card.id)}>
                       <FontAwesomeIcon icon={regularHeart} color="gray" />
                     </button>
+                  )}
+                  {user && user.id === card.user_id && (
+                    <>
+                      <button onClick={() => handleEdit(card.id)}>
+                        <FontAwesomeIcon icon={faEdit} color="blue" />
+                      </button>
+                      <button onClick={() => handleDelete(card.id)}>
+                        <FontAwesomeIcon icon={faTrash} color="red" />
+                      </button>
+                    </>
                   )}
                 </>
               )}
