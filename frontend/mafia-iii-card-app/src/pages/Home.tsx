@@ -10,6 +10,7 @@ const Home: React.FC = () => {
   const [cards, setCards] = useState([]);
   const [favorites, setFavorites] = useState<number[]>([]);
   const [likesDislikes, setLikesDislikes] = useState<{ [key: number]: 'like' | 'dislike' | null }>({});
+  const [searchQuery, setSearchQuery] = useState('');
   const { isAuthenticated } = useAuth();
 
   useEffect(() => {
@@ -96,11 +97,24 @@ const Home: React.FC = () => {
     }
   };
 
+  const filteredCards = cards.filter(card =>
+    card.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    card.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    card.location.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   return (
     <div className="container">
       <h1>All Cards</h1>
+      <input
+        type="text"
+        placeholder="Search cards..."
+        value={searchQuery}
+        onChange={(e) => setSearchQuery(e.target.value)}
+        className="search-bar"
+      />
       <div className="cards-grid">
-        {cards.map((card) => (
+        {filteredCards.map((card) => (
           <div key={card.id} className="card">
             <h2>{card.title}</h2>
             <p>{card.description}</p>
