@@ -80,6 +80,24 @@ router.delete('/:id', auth, async (req, res) => {
   }
 });
 
+// Admin delete card
+router.delete('/admin/:id', async (req, res) => {
+  const { id } = req.params;
+  try {
+    // Delete references in favorites table
+    await pool.query('DELETE FROM favorites WHERE card_id = $1', [id]);
+    
+    // Now delete the card
+    await pool.query('DELETE FROM cards WHERE id = $1', [id]);
+    
+    res.json({ message: 'Card and related favorites deleted' });
+  } catch (err) {
+    console.error('Error deleting card:', err.message);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+
 // Increment like count
 router.post('/:id/like', auth, async (req, res) => {
   try {
