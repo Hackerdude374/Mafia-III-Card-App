@@ -38,7 +38,7 @@ const EditCard: React.FC = () => {
       };
       await updateCard(id, updatedCard);
       alert('Card updated successfully!');
-      navigate('/');
+      navigate('/profile');
     } catch (err) {
       console.error('Error updating card:', err);
       alert('Failed to update card.');
