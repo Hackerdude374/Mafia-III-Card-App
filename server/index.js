@@ -47,8 +47,8 @@ const cardRouter = require('./routes/card');
 const favoritesRouter = require('./routes/favorites'); // Add this line
 
 const allowedOrigins = [
-  'http://localhost:3000', // For local development
-  'https://mafia-iii-card-app.vercel.app' // Your deployed frontend on Vercel
+  'http://localhost:5173', // For local development
+  'https://mafia-iii-card-rif43x4d8-hackerdude374s-projects.vercel.app' // Your deployed frontend on Vercel
 ];
 
 app.use(cors({
