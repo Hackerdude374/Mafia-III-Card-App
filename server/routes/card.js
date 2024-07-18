@@ -99,7 +99,7 @@ router.delete('/admin/:id', async (req, res) => {
 
 
 // Increment like count
-router.post('/:id/like',  async (req, res) => {
+router.post('/:id/like', auth, async (req, res) => {
   try {
     const card = await pool.query('SELECT * FROM cards WHERE id = $1', [req.params.id]);
     if (card.rows.length === 0) {
@@ -129,7 +129,7 @@ router.post('/:id/like',  async (req, res) => {
 });
 
 // Increment dislike count
-router.post('/:id/dislike',  async (req, res) => {
+router.post('/:id/dislike', auth, async (req, res) => {
   try {
     const card = await pool.query('SELECT * FROM cards WHERE id = $1', [req.params.id]);
     if (card.rows.length === 0) {
@@ -159,7 +159,7 @@ router.post('/:id/dislike',  async (req, res) => {
 });
 
 // Unlike card
-router.delete('/:id/unlike',  async (req, res) => {
+router.delete('/:id/unlike', auth,  async (req, res) => {
   try {
     const card = await pool.query('SELECT * FROM cards WHERE id = $1', [req.params.id]);
     if (card.rows.length === 0) {
@@ -187,7 +187,7 @@ router.delete('/:id/unlike',  async (req, res) => {
 });
 
 // Undislike card
-router.delete('/:id/undislike',  async (req, res) => {
+router.delete('/:id/undislike', auth, async (req, res) => {
   try {
     const card = await pool.query('SELECT * FROM cards WHERE id = $1', [req.params.id]);
     if (card.rows.length === 0) {
