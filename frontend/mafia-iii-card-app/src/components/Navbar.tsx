@@ -15,6 +15,11 @@ const Navbar: React.FC = () => {
   return (
     <nav>
       <div className="navbar-container">
+        <div className="logo">
+          <Link to="/">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b3/Mafia_III_logo.svg/2560px-Mafia_III_logo.svg.png" alt="Logo" className="logo-img" />
+          </Link>
+        </div>
         <ul>
           <li>
             <Link to="/">Home</Link>

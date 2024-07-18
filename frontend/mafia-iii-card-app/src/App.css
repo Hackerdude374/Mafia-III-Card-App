@@ -1,3 +1,4 @@
+/* General styles */
 * {
   box-sizing: border-box;
 }
@@ -14,13 +15,14 @@ body {
   align-items: center;
 }
 
+/* Navbar styles */
 nav {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   background-color: #20232a;
-  padding: 1.5em 0; /* Increased padding for thicker navbar */
+  padding: 1.5em 0;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   z-index: 1000;
 }
@@ -28,6 +30,7 @@ nav {
 .navbar-container {
   display: flex;
   justify-content: center;
+  align-items: center;
 }
 
 nav ul {
@@ -35,13 +38,11 @@ nav ul {
   padding: 0;
   margin: 0;
   display: flex;
-  justify-content: center;
+  align-items: center;
 }
 
 nav ul li {
   margin: 0 1em;
-  display: flex;
-  align-items: center; /* Ensures all items are aligned in the center */
 }
 
 nav ul li a,
@@ -59,9 +60,19 @@ nav ul li button:hover {
   text-decoration: underline;
 }
 
+.logo {
+  margin-right: 20px;
+}
+
+.logo-img {
+  height: 40px;
+  width: auto;
+}
+
+/* Main content styles */
 .main-content {
   width: 100%;
-  padding-top: 6em; /* Adjust this value based on the new height of your navbar */
+  padding-top: 6em;
   display: flex;
   justify-content: center;
 }
@@ -82,6 +93,7 @@ nav ul li button:hover {
   text-align: center;
 }
 
+/* Cards grid and card styles */
 .cards-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -95,7 +107,8 @@ nav ul li button:hover {
   border-radius: 10px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   text-align: left;
-  width: 100%; /* Ensure cards take up the available space */
+  width: 100%;
+  animation: fadeIn 0.5s ease-in;
 }
 
 .card img {
@@ -104,35 +117,25 @@ nav ul li button:hover {
 }
 
 .card button {
-  background-color: #333;
-  color: white;
+  background: none;
   border: none;
-  padding: 10px 15px;
-  border-radius: 5px;
   cursor: pointer;
+  padding: 0;
+  margin-top: 10px;
+  font-size: 1.5em;
 }
 
 .card button:hover {
-  background-color: #555;
+  color: darkred;
 }
 
-.container ul {
-  list-style-type: none;
-  padding: 0;
+.card-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
 }
 
-.container ul li {
-  margin: 1em 0;
-  padding: 1em;
-  background-color: #282c34;
-  border-radius: 5px;
-}
-
-.container ul li img {
-  max-width: 100%;
-  border-radius: 5px;
-}
-
+/* Form styles */
 form {
   max-width: 400px;
   margin: 2em auto;
@@ -140,6 +143,7 @@ form {
   background-color: #20232a;
   border-radius: 5px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  animation: fadeIn 0.5s ease-in;
 }
 
 form input {
@@ -165,6 +169,7 @@ form button:hover {
   background-color: #21a1f1;
 }
 
+/* Floating action button (FAB) styles */
 .fab {
   position: fixed;
   bottom: 20px;
@@ -187,25 +192,7 @@ form button:hover {
   background-color: #21a1f1;
 }
 
-.card button {
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0;
-  margin-top: 10px;
-  font-size: 1.5em;
-}
-
-.card button:hover {
-  color: darkred;
-}
-
-.card-actions {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-}
-
+/* Search bar styles */
 .search-bar {
   width: 100%;
   padding: 0.5em;
@@ -213,4 +200,14 @@ form button:hover {
   border: 1px solid #ccc;
   border-radius: 5px;
   font-size: 1em;
+}
+
+/* Keyframes for fade-in animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
