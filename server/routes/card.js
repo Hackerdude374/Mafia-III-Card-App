@@ -195,5 +195,18 @@ router.delete('/:id/undislike', auth, async (req, res) => {
     res.status(500).json({ message: 'Server error' });
   }
 });
-
+// Fetch card by ID
+router.get('/:id', async (req, res) => {
+  const { id } = req.params;
+  try {
+    const card = await pool.query('SELECT * FROM cards WHERE id = $1', [id]);
+    if (card.rows.length === 0) {
+      return res.status(404).json({ message: 'Card not found' });
+    }
+    res.json(card.rows[0]);
+  } catch (err) {
+    console.error('Error fetching card by ID:', err.message);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
 module.exports = router;

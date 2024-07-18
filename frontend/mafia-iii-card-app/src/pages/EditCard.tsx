@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { updateCard, fetchCard } from '../api';
+import { updateCard, fetchCardById } from '../api';
 
 const EditCard: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -13,7 +13,7 @@ const EditCard: React.FC = () => {
   useEffect(() => {
     const getCardDetails = async () => {
       try {
-        const { data } = await fetchCard(id);
+        const { data } = await fetchCardById(id);
         setTitle(data.title);
         setDescription(data.description);
         setLocation(data.location);

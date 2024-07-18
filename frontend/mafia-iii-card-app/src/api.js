@@ -28,3 +28,4 @@ export const registerUser = (userData) => api.post('/users/signup', userData);
 export const deleteCard = (cardId) => api.delete(`/cards/${cardId}`);
 export const fetchCard = (cardId) => api.get(`/cards/${cardId}`);
 export const updateCard = (cardId, cardData) => api.put(`/cards/${cardId}`, cardData);
+export const fetchCardById = (id) => api.get(`/cards/${id}`);
