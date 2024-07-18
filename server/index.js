@@ -48,9 +48,11 @@ const favoritesRouter = require('./routes/favorites'); // Add this line
 //frontend URLS
 const allowedOrigins = [
   'http://localhost:5173', // For local development
-  'https://mafia-iii-card-app.vercel.app/', // Your deployed frontend on Vercel
-  'mafia-iii-card-lky792w4x-hackerdude374s-projects.vercel.app',
+  'https://mafia-iii-card-app.vercel.app', // Your primary Vercel URL
+  'https://mafia-iii-card-dlvb9nt78-hackerdude374s-projects.vercel.app', // Another Vercel URL
+  'https://mafia-iii-card-7st6mq1sf-hackerdude374s-projects.vercel.app' // New Vercel URL causing the issue
 ];
+
 
 app.use(cors({
   origin: allowedOrigins,
