@@ -45,10 +45,11 @@ const PORT = process.env.PORT || 5000;
 const userRouter = require('./routes/user');
 const cardRouter = require('./routes/card');
 const favoritesRouter = require('./routes/favorites'); // Add this line
-
+//frontend URLS
 const allowedOrigins = [
   'http://localhost:5173', // For local development
-  'https://mafia-iii-card-app.vercel.app/' // Your deployed frontend on Vercel
+  'https://mafia-iii-card-app.vercel.app/', // Your deployed frontend on Vercel
+  'mafia-iii-card-lky792w4x-hackerdude374s-projects.vercel.app',
 ];
 
 app.use(cors({
@@ -97,3 +98,4 @@ app.get('/', (req, res) => {
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
+ 
