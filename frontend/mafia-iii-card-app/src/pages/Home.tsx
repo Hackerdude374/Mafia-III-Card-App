@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { fetchCards, fetchFavorites, addFavorite, removeFavorite, likeCard, dislikeCard, unlikeCard, undislikeCard, deleteCard } from '../api';
 import { useAuth } from '../AuthContext';
+import { useLikesDislikes } from '../context/LikesDislikesContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHeart as solidHeart, faThumbsUp, faThumbsDown, faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { faHeart as regularHeart } from '@fortawesome/free-regular-svg-icons';
@@ -10,9 +11,9 @@ import { useNavigate } from 'react-router-dom';
 const Home: React.FC = () => {
   const [cards, setCards] = useState([]);
   const [favorites, setFavorites] = useState<number[]>([]);
-  const [likesDislikes, setLikesDislikes] = useState<{ [key: number]: 'like' | 'dislike' | null }>({});
-  const [searchQuery, setSearchQuery] = useState('');
   const { isAuthenticated, user } = useAuth();
+  const { likesDislikes, setLikesDislikes } = useLikesDislikes();
+  const [searchQuery, setSearchQuery] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -25,6 +26,19 @@ const Home: React.FC = () => {
           try {
             const { data: favoritesData } = await fetchFavorites();
             setFavorites(favoritesData.map((fav: any) => fav.id)); // Assuming 'id' is the card ID
+
+            // Initialize likesDislikes state
+            const initialLikesDislikes: { [key: number]: 'like' | 'dislike' | null } = {};
+            cardsData.forEach((card: any) => {
+              if (card.liked_by.includes(user.id)) {
+                initialLikesDislikes[card.id] = 'like';
+              } else if (card.disliked_by.includes(user.id)) {
+                initialLikesDislikes[card.id] = 'dislike';
+              } else {
+                initialLikesDislikes[card.id] = null;
+              }
+            });
+            setLikesDislikes(initialLikesDislikes);
           } catch (err) {
             console.error('Error fetching favorites:', err);
           }
@@ -142,10 +156,16 @@ const Home: React.FC = () => {
             <p>{card.location}</p>
             <img src={card.image} alt={card.title} />
             <div className="card-actions">
-              <button onClick={() => handleLike(card.id)}>
+              <button
+                onClick={() => handleLike(card.id)}
+                disabled={likesDislikes[card.id] === 'dislike'}
+              >
                 <FontAwesomeIcon icon={faThumbsUp} color={likesDislikes[card.id] === 'like' ? 'green' : 'gray'} /> {card.likes}
               </button>
-              <button onClick={() => handleDislike(card.id)}>
+              <button
+                onClick={() => handleDislike(card.id)}
+                disabled={likesDislikes[card.id] === 'like'}
+              >
                 <FontAwesomeIcon icon={faThumbsDown} color={likesDislikes[card.id] === 'dislike' ? 'red' : 'gray'} /> {card.dislikes}
               </button>
               {isAuthenticated && (
