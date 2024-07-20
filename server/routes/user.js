@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const pool = require('../db');
+const prisma = require('../db');
 require('dotenv').config();
 
 // User registration
@@ -10,13 +10,15 @@ router.post('/signup', async (req, res) => {
   const { username, password } = req.body;
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
-    const newUser = await pool.query(
-      'INSERT INTO users (username, password) VALUES ($1, $2) RETURNING *',
-      [username, hashedPassword]
-    );
+    const newUser = await prisma.user.create({
+      data: {
+        username,
+        password: hashedPassword
+      }
+    });
 
     const token = jwt.sign(
-      { user_id: newUser.rows[0].id, username: newUser.rows[0].username },
+      { user_id: newUser.id, username: newUser.username },
       process.env.JWT_SECRET,
       { expiresIn: '1h' }
     );
@@ -25,6 +27,9 @@ router.post('/signup', async (req, res) => {
     res.json({ token });
   } catch (err) {
     console.error(err.message);
+    if (err.code === 'P2002') {
+      return res.status(400).json({ message: 'Username already exists' });
+    }
     res.status(500).send('Server error');
   }
 });
@@ -33,18 +38,20 @@ router.post('/signup', async (req, res) => {
 router.post('/login', async (req, res) => {
   const { username, password } = req.body;
   try {
-    const user = await pool.query('SELECT * FROM users WHERE username = $1', [username]);
-    if (user.rows.length === 0) {
+    const user = await prisma.user.findUnique({
+      where: { username }
+    });
+    if (!user) {
       return res.status(400).json({ message: 'Invalid credentials' });
     }
 
-    const isMatch = await bcrypt.compare(password, user.rows[0].password);
+    const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return res.status(400).json({ message: 'Invalid credentials' });
     }
 
     const token = jwt.sign(
-      { user_id: user.rows[0].id, username: user.rows[0].username },
+      { user_id: user.id, username: user.username },
       process.env.JWT_SECRET,
       { expiresIn: '1h' }
     );
